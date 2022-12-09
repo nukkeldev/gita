@@ -8,7 +8,7 @@ use colored::Colorize;
 use gita::{
     error,
     logging::{self, log},
-    success,
+    success, warning,
 };
 
 fn main() {
@@ -59,13 +59,8 @@ fn link(path: String) {
         success!(format!("Remote {} set to {}\n", "origin".purple(), path.yellow()).as_str());
     }
 
-    git(&["push", "--set-upstream", "origin", "master", "--dry-run"]);
-    success!(format!(
-        "Upstream Branch set as {}/{}",
-        "origin".purple(),
-        "master".yellow()
-    )
-    .as_str());
+    git(&["config", "push.autoSetupRemote", "true"]);
+    warning!("Upstream remote will setup on first push");
 }
 
 fn pusha(msg: String) {
@@ -74,7 +69,7 @@ fn pusha(msg: String) {
         vec!["commit", "-m", msg.as_str()],
         vec!["push"],
     ];
-    log("");
+    log(""); // TODO: Log each step
 }
 
 fn git(args: &[&str]) -> bool {
